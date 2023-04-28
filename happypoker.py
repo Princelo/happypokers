@@ -113,6 +113,258 @@ def tokey(m, c, p, myturn):
         key = (m.state, c.state, tuple(p), myturn)
     return key
 
+def maximize(c, p):
+    if not p:
+        return p
+    if issingle(p):
+        m = p
+        while not c.cards[p] and p <= 18:
+            m = p
+            p += 1
+        return m
+    elif len(p) == 2 and p[0] == p[1]:
+        m = p
+        while c.cards[p[0]] < 2 and p[0] <= 16:
+            m = p
+            p = [p[0] + 1, p[0] + 1]
+        return m if m[0] != 16 else 18
+    elif len(p) == 3:
+        m = p
+        while c.cards[p[0]] < 3 and p[0] <= 16:
+            m = p
+            p = [p[0] + 1, p[0] + 1, p[0] + 1]
+        return m if m[0] != 16 else 18
+    elif len(p) == 4 and not isbomb(p):
+        m = p
+        while c.cards[p[0]] < 3 and p[0] <= 16:
+            m = p
+            p = [p[0] + 1, p[0] + 1, p[0] + 1, 1]
+        return m if m[0] != 16 else 18
+    elif isfull(p):
+        m = p
+        while c.cards[p[0]] < 3 and p[0] <= 16:
+            m = p
+            p = [p[0] + 1, p[0] + 1, p[0] + 1, 1, 1]
+        return m if m[0] != 16 else 18
+    elif isbomb(p):
+        m = p
+        while c.cards[p[0]] < 4 and p[0] <= 16:
+            m = p
+            p = [p[0] + 1, p[0] + 1, p[0] + 1, p[0] + 1]
+        if not c.cards[18] or not c.cards[17]:
+            return m if m[0] != 16 else [18, 17]
+        return m
+    elif withplane(p):
+        m = p
+        while c.cards[p[0]] < 3 or c.cards[p[3]] < 3 and p[0] <= 13:
+            m = p
+            if len(p) == 6:
+                p = [p[0] + 1, p[0] + 1, p[0] + 1, p[0] + 2, p[0] + 2, p[0] + 2]
+            elif len(p) == 8:
+                p = [p[0] + 1, p[0] + 1, p[0] + 1, p[0] + 2, p[0] + 2, p[0] + 2, 1, 1]
+            elif len(p) == 10:
+                p = [p[0] + 1, p[0] + 1, p[0] + 1, p[0] + 2, p[0] + 2, p[0] + 2, 1, 1, 1, 1]
+        return m if m[0] != 13 else 18
+    elif isstraight(p):
+        if len(p) == 5:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]]) and p[4] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1]
+            return m if m[4] != 14 else 18
+        elif len(p) == 6:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]]) and p[5] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1]
+            return m if m[5] != 14 else 18
+        elif len(p) == 7:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]]) and p[6] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1]
+            return m if m[6] != 14 else 18
+        elif len(p) == 8:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]] or
+                    not c.cards[p[7]]) and p[7] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1, p[7] + 1]
+            return m if m[7] != 14 else 18
+        elif len(p) == 9:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]] or
+                    not c.cards[p[7]] or
+                    not c.cards[p[8]]) and p[8] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1, p[7] + 1, p[8] + 1]
+            return m if m[8] != 14 else 18
+        elif len(p) == 10:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]] or
+                    not c.cards[p[7]] or
+                    not c.cards[p[8]] or
+                    not c.cards[p[9]]) and p[9] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1, p[7] + 1, p[8] + 1, p[9] + 1]
+            return m if m[9] != 14 else 18
+        elif len(p) == 11:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]] or
+                    not c.cards[p[7]] or
+                    not c.cards[p[8]] or
+                    not c.cards[p[9]] or
+                    not c.cards[p[10]]) and p[10] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1, p[7] + 1, p[8] + 1, p[9] + 1,
+                     p[10] + 1]
+            return m if m[10] != 14 else 18
+        elif len(p) == 12:
+            m = p
+            while ((not c.cards[p[0]] or 
+                   not c.cards[p[1]] or
+                   not c.cards[p[2]] or
+                   not c.cards[p[3]] or
+                    not c.cards[p[4]] or
+                    not c.cards[p[5]] or
+                    not c.cards[p[6]] or
+                    not c.cards[p[7]] or
+                    not c.cards[p[8]] or
+                    not c.cards[p[9]] or
+                    not c.cards[p[10]] or
+                    not c.cards[p[11]]) and p[11] <= 14):
+                m = p
+                p = [p[0] + 1, p[1] + 1, p[2] + 1, p[3] + 1, p[4] + 1,
+                     p[5] + 1, p[6] + 1, p[7] + 1, p[8] + 1, p[9] + 1,
+                     p[10] + 1, p[11] + 1]
+            return m if m[11] != 14 else 18
+        else:
+            return p
+    elif ispairseq(p):
+        if len(p) == 6:
+            m = p
+            while ((c.cards[p[0]] < 2 or 
+                   c.cards[p[2]] < 2 or
+                   c.cards[p[4]] < 2)
+                   and p[4] <= 14):
+                m = p
+                p = [p[0] + 1, p[0] + 1,
+                     p[2] + 1, p[2] + 1,
+                     p[4] + 1, p[4] + 1]
+            return m if m[4] != 14 else 18
+        if len(p) == 8:
+            m = p
+            while ((c.cards[p[0]] < 2 or 
+                   c.cards[p[2]] < 2 or
+                   c.cards[p[4]] < 2 or
+                   c.cards[p[6]] < 2)
+                   and p[6] <= 14):
+                m = p
+                p = [p[0] + 1, p[0] + 1,
+                     p[2] + 1, p[2] + 1,
+                     p[4] + 1, p[4] + 1,
+                     p[6] + 1, p[6] + 1]
+            return m if m[6] != 14 else 18
+        if len(p) == 10:
+            m = p
+            while ((c.cards[p[0]] < 2 or 
+                   c.cards[p[2]] < 2 or
+                   c.cards[p[4]] < 2 or
+                   c.cards[p[6]] < 2 or
+                   c.cards[p[8]] < 2)
+                   and p[8] <= 14):
+                m = p
+                p = [p[0] + 1, p[0] + 1,
+                     p[2] + 1, p[2] + 1,
+                     p[4] + 1, p[4] + 1,
+                     p[6] + 1, p[6] + 1,
+                     p[8] + 1, p[8] + 1]
+            return m if m[8] != 14 else 18
+        if len(p) == 12:
+            m = p
+            while ((c.cards[p[0]] < 2 or 
+                   c.cards[p[2]] < 2 or
+                   c.cards[p[4]] < 2 or
+                   c.cards[p[6]] < 2 or
+                   c.cards[p[8]] < 2 or
+                   c.cards[p[10]] < 2)
+                   and p[10] <= 14):
+                m = p
+                p = [p[0] + 1, p[0] + 1,
+                     p[2] + 1, p[2] + 1,
+                     p[4] + 1, p[4] + 1,
+                     p[6] + 1, p[6] + 1,
+                     p[8] + 1, p[8] + 1,
+                     p[10] + 1, p[10] + 1]
+            return m if m[10] != 14 else 18
+        if len(p) == 14:
+            m = p
+            while ((c.cards[p[0]] < 2 or 
+                   c.cards[p[2]] < 2 or
+                   c.cards[p[4]] < 2 or
+                   c.cards[p[6]] < 2 or
+                   c.cards[p[8]] < 2 or
+                   c.cards[p[10]] < 2 or
+                   c.cards[p[12]] < 2)
+                   and p[12] <= 14):
+                m = p
+                p = [p[0] + 1, p[0] + 1,
+                     p[2] + 1, p[2] + 1,
+                     p[4] + 1, p[4] + 1,
+                     p[6] + 1, p[6] + 1,
+                     p[8] + 1, p[8] + 1,
+                     p[10] + 1, p[10] + 1,
+                     p[12] + 1, p[12] + 1]
+            return m if m[12] != 14 else 18
+
+    return p
+
+
 res = [""]
 dp = {}
 mp = [True]
@@ -125,6 +377,10 @@ def dfs(m, c, myturn, p = None):
     if mp[0] and p and not issingle(p):
         modify(p)
     mp[0] = False
+    if myturn:
+        p = maximize(m, p)
+    else:
+        p = maximize(c, p)
     if not c.state:
         return False
     if not m.state:
@@ -1064,8 +1320,8 @@ A = 14
 ACE = 14
 import time
 start_time = time.time()
-comp = [JOKER2,2,A,K,J,J,10,10,9,7,7,5]
-mine = [2,A,K,Q,Q,J,J,10,10,9,8,3]
+comp = [JOKER2,2,A,K,J,J,10,10,9,8,7,7,5]
+mine = [2,A,K,Q,Q,J,J,10,10,9,8,5,3]
 comp = Pokers(comp)
 mine = Pokers(mine)
 if dfs(mine, comp, True):
