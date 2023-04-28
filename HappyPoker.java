@@ -123,7 +123,7 @@ public class HappyPoker {
         if (mine.state == 0L) {
             return true;
         }
-        int pState = 0;
+        long pState = 0L;
         for (int card : p) {
             if (card == 18) {
                 pState += Math.pow(5, 15);
